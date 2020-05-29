@@ -718,7 +718,7 @@ class Postgresql(object):
     def follow(self, member, role='replica', timeout=None, do_reload=False):
         recovery_params = self.config.build_recovery_params(member)
         self.config.write_recovery_conf(recovery_params)
-
+        #demote 降级
         # When we demoting the master or standby_leader to replica or promoting replica to a standby_leader
         # and we know for sure that postgres was already running before, we will only execute on_role_change
         # callback and prevent execution of on_restart/on_start callback.
@@ -747,6 +747,7 @@ class Postgresql(object):
             data = self.controldata()
             if data.get('Database cluster state') == 'in production':
                 return True
+        return False
 
     def promote(self, wait_seconds, on_success=None, access_is_restricted=False):
         if self.role == 'master':

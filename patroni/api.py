@@ -557,6 +557,7 @@ class RestApiServer(ThreadingMixIn, HTTPServer, Thread):
 
         self.address_family = info[0][0]
         try:
+            #使用RestApiHandler来初始化，具体功能都在RestApiHandler中实现
             HTTPServer.__init__(self, info[0][-1][:2], RestApiHandler)
         except socket.error:
             logger.error(

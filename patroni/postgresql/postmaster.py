@@ -63,6 +63,7 @@ class PostmasterProcess(psutil.Process):
     def _is_postmaster_process(self):
         try:
             start_time = int(self._postmaster_pid.get('start_time', 0))
+            #3秒是不是太短了
             if start_time and abs(self.create_time() - start_time) > 3:
                 logger.info('Process %s is not postmaster, too much difference between PID file start time %s and '
                             'process start time %s', self.pid, self.create_time(), start_time)

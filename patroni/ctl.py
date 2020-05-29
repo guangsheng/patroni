@@ -131,6 +131,18 @@ arg_cluster_name = click.argument('cluster_name', required=False,
 option_insecure = click.option('-k', '--insecure', is_flag=True, help='Allow connections to SSL sites without certs')
 
 
+'''
+参考：https://www.cnblogs.com/xiao-apple36/p/9089027.html
+1. Click is a Python package for creating beautiful command line 
+interfaces in a composable way with as little code as necessary.
+用于快速创建命令行的第三方模块
+2. 
+@click.option() 等装饰函数，为其添加命令行选项
+@click.group() 创建一个命令行组，也就是说它可以有各种参数来解决相同类别的不同问题
+@click.command() 装饰一个函数，使之成为命令行接口；
+@click.pass_context 用于生成ctx对象
+@click.argument 来添加固定参数
+'''
 @click.group()
 @click.option('--config-file', '-c', help='Configuration file',
               envvar='PATRONICTL_CONFIG_FILE', default=CONFIG_FILE_PATH)

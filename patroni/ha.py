@@ -1073,6 +1073,7 @@ class Ha(object):
         self.set_start_timeout(timeout)
 
         # For non async cases we want to wait for restart to complete or timeout before returning.
+        # self.state_handler = patroni.postgresql
         do_restart = functools.partial(self.state_handler.restart, timeout, self._async_executor.critical_task)
         if self.is_synchronous_mode() and not self.has_lock():
             do_restart = functools.partial(self.while_not_sync_standby, do_restart)
@@ -1241,6 +1242,14 @@ class Ha(object):
         self._start_timeout = value
 
     def _run_cycle(self):
+        '''SGS:
+            1. 检查本patroni关联的memeber是否存活
+            2. 根据member的状态做不同处理
+                存活
+                启动中
+                恢复中
+            TODO: 画状态机
+        '''
         dcs_failed = False
         try:
             self.state_handler.reset_cluster_info_state()

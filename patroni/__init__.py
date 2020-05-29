@@ -47,6 +47,7 @@ class Patroni(object):
         while True:
             try:
                 cluster = self.dcs.get_cluster()
+                #TODO: 动态参数 cluster.config 有哪些？如何设置？
                 if cluster and cluster.config and cluster.config.data:
                     if self.config.set_dynamic_configuration(cluster.config):
                         self.dcs.reload_config(self.config)
@@ -120,18 +121,21 @@ class Patroni(object):
             return self._received_sigterm
 
     def run(self):
+        # SGS: 启动API
         self.api.start()
+        # SGS: 启动日志记录
         self.logger.start()
         self.next_run = time.time()
 
         while not self.received_sigterm:
+            # SGS: 是否收到SIGHUP信号 如何触发这个信息，直接用kill命令下发？
             if self._received_sighup:
                 self._received_sighup = False
                 if self.config.reload_local_configuration():
                     self.reload_config(True)
                 else:
                     self.postgresql.config.reload_config(self.config['postgresql'], True)
-
+            # SGS: 定时检查本patroni关联的member的状态并做响应处理，具体见 run_cycle 函数里的注释
             logger.info(self.ha.run_cycle())
 
             if self.dcs.cluster and self.dcs.cluster.config and self.dcs.cluster.config.data \
